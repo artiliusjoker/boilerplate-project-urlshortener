@@ -37,7 +37,7 @@ app.get("/api/hello", function (req, res) {
 });
 
 // /api/shorturl
-const urlRegex = /^(http|https)\:\/\/(www\.)?[a-zA-Z]*\.[a-zA-Z]*/;
+const urlRegex = /^(http|https)\:\/\/(www\.)?[a-zA-Z]*\.?[a-zA-Z]*/;
 app
   .route("/api/shorturl/:url?")
   .post(async (req, res) => {
@@ -72,7 +72,10 @@ app
   })
   .get(async (req, res) => {
     const url = Number(req.params.url);
-
+    if (isNaN(url)) {
+      res.json({ error: "invalid url" });
+      return;
+    }
     const getUrl = await urlService.getOriginalUrl(url);
     res.redirect(getUrl.originalURL);
   });
